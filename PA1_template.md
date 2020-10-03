@@ -7,9 +7,7 @@ output:
     keep_md: true
 ---
 
-```{r setup, include = FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
-```
+
 
 ## Introduction
 
@@ -39,7 +37,8 @@ Bear in mind that tibbles are an attractive alternative to plain data frames: th
 
 You can read these lines in their online book here: [Chapter 11: Data Import](https://r4ds.had.co.nz/data-import.html)
 
-```{r echo = TRUE}
+
+```r
 library(tidyverse)
 activity <- read_csv("activity.csv")
 ```
@@ -56,17 +55,36 @@ This will be done later on depending on the required transformation to obtain th
 
 Here I show you the first rows of this newly created data frame. Adding `%>% print(n = dim(activity)[1])` at the end of the following code will show all the 61 rows corresponding to all days from October and November 2012 alongside their total steps in each day.
 
-```{r}
+
+```r
 activity %>% 
   group_by(date) %>% 
   summarize(total_steps = sum(steps, na.rm = TRUE))
+```
+
+```
+## # A tibble: 61 x 2
+##    date       total_steps
+##    <date>           <dbl>
+##  1 2012-10-01           0
+##  2 2012-10-02         126
+##  3 2012-10-03       11352
+##  4 2012-10-04       12116
+##  5 2012-10-05       13294
+##  6 2012-10-06       15420
+##  7 2012-10-07       11015
+##  8 2012-10-08           0
+##  9 2012-10-09       12811
+## 10 2012-10-10        9900
+## # ... with 51 more rows
 ```
 
 **2. If you do not understand the difference between a histogram and a barplot, research the difference between them. Make a histogram of the total number of steps taken each day**
 
 In a nutshell, a histogram shows the distribution of values of a continuous variable; the Y-axis can represent the frequency of each interval or the density. On the other hand, a bar plot shows categorical variables in the X-axis and their corresponding values for another variable in the Y-axis.
 
-```{r}
+
+```r
 activity %>% 
   group_by(date) %>% 
   summarize(total_steps = sum(steps, na.rm = TRUE)) %>% 
@@ -76,17 +94,31 @@ activity %>%
   labs(x = "Total Number of Steps", y = "Number of Days")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-3-1.png)<!-- -->
+
 Due to the functioning of dplyr, we get several days with 0 total number of steps, thus constituting a bias. In fact, most of these days (8 out of 10) correspond to days with missing values as we will see later in the 4th question of the "Imputing missing values" section. There, I show an almost identical green histogram, but only with 2 days with 0 total number of steps.
 
 **3. Calculate and report the mean and median of the total number of steps taken per day**
 
-```{r}
+
+```r
 temp_activity <- activity %>% 
   group_by(date) %>% 
   summarize(total_steps = sum(steps, na.rm = TRUE))
 
 mean(temp_activity$total_steps, na.rm = TRUE)
+```
+
+```
+## [1] 9354.23
+```
+
+```r
 median(temp_activity$total_steps, na.rm = TRUE)
+```
+
+```
+## [1] 10395
 ```
 
 We get a mean of **9354.23 steps** and a median of **10395 steps**.
@@ -101,7 +133,8 @@ Instead of using `plot()` with `type = "l"` as an argument, I used `geom_line()`
 
 Here I show you the time series plot. It is important to highlight that we have several NaN (Not a Number) missing values. Specifically, we have 8 NaNs in the following dates: 2012-10-01, 2012-10-08, 2012-11-01, 2012-11-04, 2012-11-09, 2012-11-10, 2012-11-14, and 2012-11-30.
 
-```{r}
+
+```r
 activity %>% 
   group_by(interval) %>% 
   summarize(mean_steps = mean(steps, na.rm = TRUE)) %>% 
@@ -110,14 +143,24 @@ activity %>%
   labs(x = "5-Minute Interval", y = "Mean Steps")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
+
 **2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?**
 
-```{r}
+
+```r
 activity %>% 
   group_by(interval) %>% 
   summarize(mean_steps = mean(steps, na.rm = TRUE)) %>% 
   mutate(rank = rank(-mean_steps)) %>% 
   filter(rank == 1)
+```
+
+```
+## # A tibble: 1 x 3
+##   interval mean_steps  rank
+##      <dbl>      <dbl> <dbl>
+## 1      835       206.     1
 ```
 
 According to this transformation, the 5-minute interval that, on average across all days, contains the maximum number of steps, is the **835 interval** with an average of **206 steps**.
@@ -130,8 +173,13 @@ According to this transformation, the 5-minute interval that, on average across 
 
 We only have missing values in the "steps" column:
 
-```{r}
+
+```r
 sum(is.na(activity$steps))
+```
+
+```
+## [1] 2304
 ```
 
 The total number of missing values in the dataset is **2304**.
@@ -142,7 +190,8 @@ I decided to take the mean of each 5-minute interval in a new data frame ("means
 
 **3. Create a new dataset that is equal to the original dataset but with the missing data filled in.**
 
-```{r}
+
+```r
 means <- activity %>% 
     group_by(interval) %>% 
     summarize(mean_steps = mean(steps, na.rm = TRUE))
@@ -154,11 +203,24 @@ activity2[is.na(activity2$steps), 1] <- input_means$mean_steps
 head(activity2)
 ```
 
+```
+## # A tibble: 6 x 3
+##    steps date       interval
+##    <dbl> <date>        <dbl>
+## 1 1.72   2012-10-01        0
+## 2 0.340  2012-10-01        5
+## 3 0.132  2012-10-01       10
+## 4 0.151  2012-10-01       15
+## 5 0.0755 2012-10-01       20
+## 6 2.09   2012-10-01       25
+```
+
 This new data frame without missing values is called "activity2".
 
 **4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?**
 
-```{r}
+
+```r
 activity2 %>% 
   group_by(date) %>% 
   summarize(total_steps = sum(steps, na.rm = TRUE)) %>% 
@@ -168,17 +230,31 @@ activity2 %>%
   labs(x = "Total Number of Steps", y = "Number of Days")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
+
 If you compare this histogram to the previous one, which includes the missing values, you may conclude that they are practically identical, **with the exception of those 8 days with missing values coded as zeros**. Those 8 days are now distributed across other histogram bins.
 
 Now, we proceed to calculate the mean and median total number of steps taken per day in this new data set:
 
-```{r}
+
+```r
 temp_activity2 <- activity2 %>% 
   group_by(date) %>% 
   summarize(total_steps = sum(steps, na.rm = TRUE))
 
 mean(temp_activity2$total_steps, na.rm = TRUE)
+```
+
+```
+## [1] 10766.19
+```
+
+```r
 median(temp_activity2$total_steps, na.rm = TRUE)
+```
+
+```
+## [1] 10766.19
 ```
 
 We see that our original data set yielded a mean of **9354.23 steps** and a median of **10395 steps**. Compared with our new data set with the missing data filled in, this one yields a mean of **10766.19 steps** and a median of **10766.19 steps** too.
@@ -193,8 +269,16 @@ Since out new mean is bigger and also coincides with the new median, we have a p
 
 Here I create this new factor variable called "week_type". Before doing that, I create another factor variable called "weekday" indicating if the date corresponds to Monday, Tuesday, Wednesday, etc. I call `Sys.setlocale("LC_TIME", "English")` to make sure that whoever runs this code gets the name of the days of the week in English.
 
-```{r}
+
+```r
 Sys.setlocale("LC_TIME", "English")
+```
+
+```
+## [1] "English_United States.1252"
+```
+
+```r
 activity3 <- activity2
 activity3$weekday <- factor(weekdays(activity$date), 
                             levels = c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"))
@@ -208,7 +292,8 @@ activity3$week_type <- as_factor(activity3$week_type)
 
 In the README file, Professor Peng uses the lattice package as an example. Once again, here I use ggplot2 just because it's easier to use, more elegant, and more popular than lattice or base.
 
-```{r}
+
+```r
 activity3 %>% 
   group_by(week_type, interval) %>% 
   summarize(mean_steps = mean(steps, na.rm = TRUE)) %>% 
@@ -217,6 +302,8 @@ activity3 %>%
   facet_grid(week_type ~ .) +
   labs(x = "5-Minute Interval", y = "Mean Steps")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
 
 Overall, we see less average steps before the 1000 interval for the weekends, and more activity patterns between the 1000 and 1750 intervals for the weekends as well.
 
