@@ -125,7 +125,7 @@ We get a mean of **9354.23 steps** and a median of **10395 steps**.
 
 ## What is the average daily activity pattern?
 
-**1. Make a time series plot (i.e. \color{red}{\verb|type = "l"|}type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)**
+**1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)**
 
 Instead of using `plot()` with `type = "l"` as an argument, I used `geom_line()` from ggplot2. According to our instructor, Roger Peng:
 
@@ -167,9 +167,9 @@ According to this transformation, the 5-minute interval that, on average across 
 
 ## Imputing missing values
 
-*Note that there are a number of days/intervals where there are missing values (coded as \color{red}{\verb|NA|}NA). The presence of missing days may introduce bias into some calculations or summaries of the data.*
+*Note that there are a number of days/intervals where there are missing values (coded as NA). The presence of missing days may introduce bias into some calculations or summaries of the data.*
 
-**1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with \color{red}{\verb|NA|}NAs)**
+**1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)**
 
 We only have missing values in the "steps" column:
 
@@ -263,7 +263,7 @@ Since out new mean is bigger and also coincides with the new median, we have a p
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-*For this part the \color{red}{\verb|weekdays()|}weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part.*
+*For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part.*
 
 **1. Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.**
 
@@ -288,7 +288,7 @@ activity3$week_type <- ifelse(activity3$weekday %in% c("Monday", "Tuesday", "Wed
 activity3$week_type <- as_factor(activity3$week_type)
 ```
 
-**2. Make a panel plot containing a time series plot (i.e. \color{red}{\verb|type = "l"|}type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.**
+**2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.**
 
 In the README file, Professor Peng uses the lattice package as an example. Once again, here I use ggplot2 just because it's easier to use, more elegant, and more popular than lattice or base.
 
